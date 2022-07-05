@@ -31,8 +31,9 @@ class RandomWords extends StatefulWidget {
 }
 
 class _RandomWordsState extends State<RandomWords> {
-  final _suggestions = <WordPair>[];
-  final _biggerFont = const TextStyle(fontSize: 18);
+  final List<WordPair> _suggestions = <WordPair>[];
+  final Set<WordPair> _saved = new Set<WordPair>();
+  final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +48,23 @@ class _RandomWordsState extends State<RandomWords> {
           _suggestions.addAll(generateWordPairs()
               .take(10)); /*4 如果是建议列表中最后一个单词对，接着再生成 10 个单词对，然后添加到建议列表。*/
         }
-        return ListTile(
-          title: Text(
-            _suggestions[index].asPascalCase,
-            style: _biggerFont,
-          ),
-        );
+        return _buildRow(_suggestions[index]);
       },
+    );
+  }
+
+  Widget _buildRow(WordPair pair) {
+    final bool alreadySaved = _saved.contains(pair);
+
+    return ListTile(
+      title: Text(
+        pair.asPascalCase,
+        style: _biggerFont,
+      ),
+      trailing: Icon(
+        alreadySaved ? Icons.favorite : Icons.favorite_border,
+        color: alreadySaved ? Colors.red : null,
+      ),
     );
   }
 }
