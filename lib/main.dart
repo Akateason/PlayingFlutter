@@ -100,6 +100,7 @@ class _RandomWordsState extends State<RandomWords> {
               );
             },
           );
+          /* 接下来，添加 MaterialPageRoute 及其 builder。 现在，添加生成 ListTile 行的代码，ListTile 的 divideTiles() 方法在每个 ListTile 之间添加 1 像素的分割线。 该 divided 变量持有最终的列表项，并通过 toList()方法非常方便的转换成列表显示。*/
           final List<Widget> divided = ListTile.divideTiles(
             context: context,
             tiles: tiles,
@@ -110,6 +111,7 @@ class _RandomWordsState extends State<RandomWords> {
             ),
             body: ListView(children: divided),
           );
+          /** builder 返回一个 Scaffold，其中包含名为"Saved Suggestions"的新路由的应用栏。新路由的body 由包含 ListTiles 行的 ListView 组成；每行之间通过一个分隔线分隔。 */
         },
       ),
     );
