@@ -6,20 +6,13 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Startup Name Generator',
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Startup Name Generator'),
-        ),
-        body: const Center(
-          child: RandomWords(),
-        ),
-      ),
+      home: RandomWords(),
     );
   }
 }
@@ -32,11 +25,24 @@ class RandomWords extends StatefulWidget {
 
 class _RandomWordsState extends State<RandomWords> {
   final List<WordPair> _suggestions = <WordPair>[];
-  final Set<WordPair> _saved = new Set<WordPair>();
+  final Set<WordPair> _saved = <WordPair>{};
   final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Startup Name Generator'),
+        actions: <Widget>[
+          IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
+        ],
+      ),
+      body: _buildSuggestions(),
+    );
+  }
+
+// 业务, 列表整体
+  Widget _buildSuggestions() {
     return ListView.builder(
       padding: const EdgeInsets.all(16.0),
       itemBuilder: /*1 cell回调*/ (context, i) {
@@ -53,6 +59,7 @@ class _RandomWordsState extends State<RandomWords> {
     );
   }
 
+// 单行
   Widget _buildRow(WordPair pair) {
     final bool alreadySaved = _saved.contains(pair);
 
@@ -74,7 +81,37 @@ class _RandomWordsState extends State<RandomWords> {
           }
         });
         /** 提示: 在 Flutter 的响应式风格的框架中，调用 setState() 会为 State 对象触发 build() 方法，从而导致对 UI 的更新 */
-      },
+      }, // onTap
+    );
+  }
+
+// 导航菜单按钮, 跳转导航. 路由.
+  void _pushSaved() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) {
+          final Iterable<ListTile> tiles = _saved.map(
+            (WordPair pair) {
+              return ListTile(
+                title: Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final List<Widget> divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList();
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Saved Suggestions'),
+            ),
+            body: ListView(children: divided),
+          );
+        },
+      ),
     );
   }
 }
